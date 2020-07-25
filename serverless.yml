@@ -5,7 +5,7 @@ provider:
   runtime: python3.8
   region: ${opt:region,'us-east-1'}
   logRetentionInDays: 14 # Set the default RetentionInDays for a CloudWatch LogGroup
-  deploymentBucket: 'your-serverless-s3-bucket'
+  deploymentBucket: ${opt:bucket}
   stage: prod
   iamRoleStatements:
     - Effect: 'Allow'
@@ -19,12 +19,12 @@ provider:
         - 'dynamodb:DescribeTable'
       Resource:
         - Fn::GetAtt:
-          - prometheusMonitorTable
+          - prometheusDeadMansSwitchTable
           - Arn
 
 resources:
   Resources:
-    prometheusMonitorTable:
+    prometheusDeadMansSwitchTable:
       Type: AWS::DynamoDB::Table
       DeletionPolicy: Delete
       Properties:
@@ -42,7 +42,7 @@ functions:
     name: prometheus-deadmansswitch-api
     handler: api.webhook
     environment:
-      VERIFY_TOKEN: 'yourverifytoken'
+      VERIFY_TOKEN: ${opt:verify-token}
       ENVIRONMENT_NAME: 'prometheus-deadmansswitch'
     memorySize: 256
     events:
@@ -61,8 +61,8 @@ functions:
     environment:
       ENVIRONMENT_NAME: 'prometheus-deadmansswitch'
       MAX_TIME_SECONDS: '300'
-      SLACK_CHANNEL: 'your-slack-channel'
-      SLACK_TOKEN: 'your-slack-bot-token'
+      SLACK_CHANNEL: ${opt:slack-channel}
+      SLACK_TOKEN: ${opt:slack-token}
       # SCALE_DOWN_CLUSTERS: 'your-dev-cluster'
       # SCALE_DOWN_CRON: '0 19 * * 1-5'
       # SCALE_UP_CRON: '30 6 * * 1-5'
