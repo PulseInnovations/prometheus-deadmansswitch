@@ -1,0 +1,78 @@
+service: prometheus-deadmansswitch
+
+provider:
+  name: aws
+  runtime: python3.8
+  region: ${opt:region,'us-east-1'}
+  logRetentionInDays: 14 # Set the default RetentionInDays for a CloudWatch LogGroup
+  deploymentBucket: 'your-serverless-s3-bucket'
+  stage: prod
+  iamRoleStatements:
+    - Effect: 'Allow'
+      Action:
+        - 'dynamodb:GetItem'
+        - 'dynamodb:BatchGetItem'
+        - 'dynamodb:PutItem'
+        - 'dynamodb:Query'
+        - 'dynamodb:Scan'
+        - 'dynamodb:UpdateItem'
+        - 'dynamodb:DescribeTable'
+      Resource:
+        - Fn::GetAtt:
+          - prometheusMonitorTable
+          - Arn
+
+resources:
+  Resources:
+    prometheusMonitorTable:
+      Type: AWS::DynamoDB::Table
+      DeletionPolicy: Delete
+      Properties:
+        TableName: prometheus-deadmansswitch
+        AttributeDefinitions:
+          - AttributeName: cluster_name
+            AttributeType: S
+        KeySchema:
+          - AttributeName: cluster_name
+            KeyType: HASH
+        BillingMode: PAY_PER_REQUEST
+
+functions:
+  prometheus-deadmansswitch-api:
+    name: prometheus-deadmansswitch-api
+    handler: api.webhook
+    environment:
+      VERIFY_TOKEN: 'yourverifytoken'
+      ENVIRONMENT_NAME: 'prometheus-deadmansswitch'
+    memorySize: 256
+    events:
+      - http:
+          path: /{cluster_name}
+          method: post
+          integration: lambda
+          response:
+            headers:
+              Content-Type: "'application/json'"
+            template: $input.path('$.body')
+
+  prometheus-deadmansswitch-checker:
+    name: prometheus-deadmansswitch-checker
+    handler: checker.check
+    environment:
+      ENVIRONMENT_NAME: 'prometheus-deadmansswitch'
+      MAX_TIME_SECONDS: '300'
+      SLACK_CHANNEL: 'your-slack-channel'
+      SLACK_TOKEN: 'your-slack-bot-token'
+      # SCALE_DOWN_CLUSTERS: 'your-dev-cluster'
+      # SCALE_DOWN_CRON: '0 19 * * 1-5'
+      # SCALE_UP_CRON: '30 6 * * 1-5'
+    memorySize: 256
+    events:
+      - schedule: rate(2 minutes)
+
+package:
+  exclude:
+    - "**"
+  include:
+    - "*.py"
+    - "vendored/**"
