@@ -2,12 +2,14 @@
 
 Deploys a couple of Lambda functions which receive the `Watchdog` webhook from Prometheus/AlertManager and alert to a Slack channel if a Prometheus instance hasn't been heard from for over 5 minutes.
 
+It uses API Gateway, DynamoDB and Lambda.
+
 - `api.py` is the Lambda responsible for receiving the webhook POST requests and storing the timestamp for each cluster in DynamoDB.
 - `checker.py` is run in a schedule and checks if any of the timestamps in DynamoDB are more than 5 minutes in the past.
 
 ## Deployment
 
-1. Install the [Serverless Framework](https://github.com/serverless/serverless) Framework, python3 and pip
+1. Install the [Serverless Framework](https://github.com/serverless/serverless), python3 and pip
 
 2. Install the dependencies with `pip3 install -t vendored/ -r requirements.txt`
 
