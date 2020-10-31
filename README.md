@@ -27,7 +27,7 @@ Where:
 
 ## Alert Manager configuration
 
-For this to work you must first have a `Watchdog` Prometheus Rule like in [coreos/kube-prometheus](https://github.com/coreos/kube-prometheus/blob/master/examples/existingrule.yaml) or the one which gets installed by default in the [prometheus-community/kube-prometheus-stack](https://github.com/prometheus-community/helm-charts/blob/d6f10fef4e92f948131f39743beac9019eb20958/charts/kube-prometheus-stack/templates/prometheus/rules/general.rules.yaml#L37) Helm Chart.
+For this to work you must first have a `Watchdog` Prometheus Rule like in [coreos/kube-prometheus](https://github.com/coreos/kube-prometheus/blob/master/examples/existingrule.yaml) or the one which gets installed by default in the [prometheus-community/kube-prometheus-stack](https://github.com/prometheus-community/helm-charts/blob/d6f10fef4e92f948131f39743beac9019eb20958/charts/kube-prometheus-stack/templates/prometheus/rules/general.rules.yaml#L37) Helm Chart. See [cablespaghetti/k3s-monitoring](https://github.com/cablespaghetti/k3s-monitoring) for a quick start guide which will set up Prometheus to work with this function.
 
 Example receiver configuration:
 ```
