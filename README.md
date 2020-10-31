@@ -23,11 +23,11 @@ Where:
 - `bucket` is a pre-existing S3 bucket where the Serverless Framework can store state
 - `verify-token` is a made up token which matches your Alert Manager configuration (see below)
 - `slack-channel` is the name of your Slack channel
-- `slack-token` is a Slack bot token with access to post to the Slack channel
+- `slack-token` is a Slack bot token with access to post to the Slack channel ([see the Slack documentation](https://api.slack.com/authentication/basics#calling))
 
 ## Alert Manager configuration
 
-For this to work you must first have a `Watchdog` Prometheus Rule like in [coreos/kube-prometheus](https://github.com/coreos/kube-prometheus/blob/master/examples/existingrule.yaml) or the [stable/prometheus-operator](https://github.com/helm/charts/blob/09afc289103a1250f4a7111c87286c72e602ea08/stable/prometheus-operator/templates/prometheus/rules/general.rules.yaml#L34) Helm Chart.
+For this to work you must first have a `Watchdog` Prometheus Rule like in [coreos/kube-prometheus](https://github.com/coreos/kube-prometheus/blob/master/examples/existingrule.yaml) or the one which gets installed by default in the [prometheus-community/kube-prometheus-stack](https://github.com/prometheus-community/helm-charts/blob/d6f10fef4e92f948131f39743beac9019eb20958/charts/kube-prometheus-stack/templates/prometheus/rules/general.rules.yaml#L37) Helm Chart.
 
 Example receiver configuration:
 ```
