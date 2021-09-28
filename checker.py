@@ -165,6 +165,12 @@ def send_slack_notification(notification_text, error=True):
     try:
         slack_response = requests.post('https://slack.com/api/chat.postMessage', json_message)
         slack_response.raise_for_status()
+
+        if not slack_response.json()["ok"]:
+            print('Received an error from slack!')
+            print(slack_response.text)
+            raise requests.RequestException
+
     except requests.RequestException as err:
         logger.error('Post to Slack API encountered an error')
         logger.error(err, exc_info=True)
