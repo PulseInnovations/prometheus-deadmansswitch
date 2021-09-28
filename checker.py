@@ -156,9 +156,6 @@ def send_slack_notification(notification_text, error=True):
     json_message = {
         'token': SLACK_TOKEN,
         'channel': SLACK_CHANNEL,
-        'as_user': 'false',
-        'icon_emoji': ':computer:',
-        'username': 'Prometheus Monitor',
         'text': slack_text
     }
 
