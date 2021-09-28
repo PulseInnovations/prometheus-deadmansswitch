@@ -164,8 +164,8 @@ def send_slack_notification(notification_text, error=True):
         slack_response.raise_for_status()
 
         if not slack_response.json()["ok"]:
-            print('Received an error from slack!')
-            print(slack_response.text)
+            logger.error('Received an error from slack!')
+            logger.error(slack_response.text)
             raise requests.RequestException
 
     except requests.RequestException as err:
