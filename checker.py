@@ -156,14 +156,18 @@ def send_slack_notification(notification_text, error=True):
     json_message = {
         'token': SLACK_TOKEN,
         'channel': SLACK_CHANNEL,
-        'as_user': 'false',
-        'icon_emoji': ':computer:',
-        'username': 'Prometheus Monitor',
         'text': slack_text
     }
 
     try:
-        requests.post('https://slack.com/api/chat.postMessage', json_message)
+        slack_response = requests.post('https://slack.com/api/chat.postMessage', json_message)
+        slack_response.raise_for_status()
+
+        if not slack_response.json()["ok"]:
+            logger.error('Received an error from slack!')
+            logger.error(slack_response.text)
+            raise requests.RequestException
+
     except requests.RequestException as err:
         logger.error('Post to Slack API encountered an error')
         logger.error(err, exc_info=True)
